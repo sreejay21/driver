@@ -1,0 +1,91 @@
+/* Order.css */
+
+.order-container {
+    text-align: center;
+    padding: 20px;
+  }
+  .travel-orders ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  .order-item {
+    border: 1px solid #ccc;
+    margin: 20px;
+    padding: 5px;
+    width: 200px;
+    background-color: #cce4a8;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #888;
+    
+  }
+  
+  .travel-orders {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 2px 2px 5px #888;
+  }
+  
+  .travel-orders h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: #333;
+  }
+  
+
+  /* Order.css */
+
+/* ... Existing styles ... */
+
+.drop-box {
+    background-color: #f9f9f9;
+    border: 2px dashed #333; /* Increase the border width for a more prominent look */
+    border-radius: 10px; /* Increase the border radius for a softer appearance */
+    padding: 20px; /* Increase the padding to make it larger */
+    margin: 10px;
+    text-align: center;
+    box-shadow: 2px 2px 5px #888;
+  }
+  
+  .drop-box p {
+    font-size: 18px; /* Increase the font size */
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  /* Style the "Drop Driver" box specifically */
+  .drop-box p {
+    background-color: #f9f9f9;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #888;
+    color: #333;
+  }
+  
+  /* Add any other styles as needed */
+  
