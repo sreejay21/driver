@@ -14,7 +14,6 @@ const Order = () => {
   const [droppedVehicles, setDroppedVehicles] = useState({});
   const [individualOrderCosts, setIndividualOrderCosts] = useState({});
   const [combinedTotalCost, setCombinedTotalCost] = useState(0);
-  
 
   useEffect(() => {
     fetchTravelOrders();
@@ -33,42 +32,27 @@ const Order = () => {
 
   const calculateOrderCost = (orderId) => {
     const order = travelOrders.find((o) => o.id === orderId);
+
     if (order) {
-      let cost = order.approxDistance * 0.5; // Base cost based on distance
-  
+      let cost = order.approxDistance * 0.5;
+
       if (driverDropped[orderId]) {
         const driver = droppedDrivers[orderId];
-        
-        // Check if the driver can drive a heavy vehicle and if the order requires it
-        if (order.vehicleType === "H" && driver.posessHeavyVehicleLicense !== true) {
-          alert("This driver cannot drive a heavy vehicle.");
-          return; // Stop cost calculation
-        }
-  
-        // Calculate the cost based on the rate per kilometer and add overtime emolument
-        const driverCost = (order.approxDistance * order.timeNeeded) + driver.overtimeRate;
-  
+
+        const driverCost =
+          order.approxDistance * order.timeNeeded + driver.overtimeRate;
         cost += driverCost;
       }
-  
+
       if (vehicleDropped[orderId]) {
         const vehicle = droppedVehicles[orderId];
-  
-        // Check if the vehicle is suitable for the order
-        if (order.vehicleType === "H" && vehicle.vehicleType !== "heavy") {
-          alert("This vehicle is not suitable for a heavy order.");
-          return; // Stop cost calculation
-        }
-  
-        // Calculate the cost based on the rate per kilometer and add the vehicle charge
-        const vehicleCost = (order.approxDistance * vehicle.perKMCost) ;
-  
+
+        const vehicleCost = order.approxDistance * vehicle.perKMCost;
         cost += vehicleCost;
       }
-  
+
       setIndividualOrderCosts({ ...individualOrderCosts, [orderId]: cost });
-  
-      // Calculate and update the combinedTotalCost
+
       const totalCost = Object.values(individualOrderCosts).reduce(
         (total, cost) => total + cost,
         0
@@ -77,31 +61,39 @@ const Order = () => {
     }
   };
 
-
   const handleDrop = (e, type, id) => {
     if (driverData) {
       if (type === "driver") {
-        if (driverDropped[id]) {
-          alert(
-            "A driver is already present in this area. Remove the existing driver first."
-          );
-          
-        }
-        
-        else {
-          
-          setDriverDropped({ ...driverDropped, [id]: true });
-          setDroppedDrivers({ ...droppedDrivers, [id]: driverData });
-
-          // Calculate the cost for the order
-          calculateOrderCost(id);
+        // Check if the driver has a heavy license
+        if   (driverData.posessHeavyVehicleLicence !== false || vehicleData.vehicleType !== "H"){
+          if (driverDropped[id]) {
+            alert(
+              "A driver is already present in this area. Remove the existing driver first."
+            );
+          } else {
+            const driverAlreadyDropped = Object.values(driverDropped).some(
+              (isDropped) => isDropped
+            );
+            if (driverAlreadyDropped) {
+              alert(
+                "This driver is already dropped in another area. Remove the driver from the previous area."
+              );
+            } else {
+              setDriverDropped({ ...driverDropped, [id]: true });
+              setDroppedDrivers({ ...droppedDrivers, [id]: driverData });
+  
+              calculateOrderCost(id);
+            }
+          }
+        } else {
+          alert("This driver does not have the appropriate license to drive a heavy vehicle.");
         }
       }
     } else {
       alert("Only drivers can be dropped here");
     }
   };
-
+  
   const handleVehicleDrop = (e, type, id) => {
     if (vehicleData) {
       if (type === "vehicle") {
@@ -110,11 +102,19 @@ const Order = () => {
             "A vehicle is already present in this area. Remove the existing vehicle first."
           );
         } else {
-          setVehicleDropped({ ...vehicleDropped, [id]: true });
-          setDroppedVehicles({ ...droppedVehicles, [id]: vehicleData });
+          const vehicleAlreadyDropped = Object.values(vehicleDropped).some(
+            (isDropped) => isDropped
+          );
+          if (vehicleAlreadyDropped) {
+            alert(
+              "This vehicle is already dropped in another area. Remove the vehicle from the previous area."
+            );
+          } else {
+            setVehicleDropped({ ...vehicleDropped, [id]: true });
+            setDroppedVehicles({ ...droppedVehicles, [id]: vehicleData });
 
-          // Calculate the cost for the order
-          calculateOrderCost(id);
+            calculateOrderCost(id);
+          }
         }
       }
     } else {
@@ -157,14 +157,14 @@ const Order = () => {
                 className="drop-box"
               >
                 {driverDropped[order.id] ? (
-                  <div>
-                    <p>{droppedDrivers[order.id].name}</p>
+                  <div >
+                    <p >{droppedDrivers[order.id].name }</p>
                     <button onClick={() => removeDriver(order.id)}>
                       Remove
                     </button>
                   </div>
                 ) : (
-                  <p>Drop Driver Here</p>
+                  <p >Drop Driver Here</p>
                 )}
               </Droppable>
               <Droppable
@@ -173,8 +173,8 @@ const Order = () => {
                 className="drop-box"
               >
                 {vehicleDropped[order.id] ? (
-                  <div>
-                    <p>{droppedVehicles[order.id].name}</p>
+                  <div >
+                    <p className="dropContent">{droppedVehicles[order.id].name}</p>
                     <button onClick={() => removeVehicle(order.id)}>
                       Remove
                     </button>
@@ -190,13 +190,11 @@ const Order = () => {
                 {driverDropped[order.id] && vehicleDropped[order.id] ? (
                   <p>Order Cost: {individualOrderCosts[order.id]} RS</p>
                 ) : null}
-                
               </div>
             </li>
           ))}
         </ul>
       </div>
-     
     </div>
   );
 };
